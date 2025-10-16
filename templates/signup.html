@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Sign up · Fitness Recommender</title>
+  <link rel="stylesheet" href="/static/css/styles.css" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+  <main class="container" style="max-width:640px">
+    <section class="card">
+      <h2>Create your account</h2>
+      {% if error %}<p class="warn">{{ error }}</p>{% endif %}
+      <form method="post" class="grid-2">
+        <label>Full name<input type="text" name="name" /></label>
+        <label>Email<input type="email" name="email" required /></label>
+        <label>Password<input type="password" name="password" required /></label>
+        <div style="grid-column:1/-1;display:flex;gap:8px">
+          <button class="primary" type="submit">Sign up</button>
+          <a href="/signin" class="pill" style="text-decoration:none">Have an account? Sign in</a>
+        </div>
+      </form>
+    </section>
+  </main>
+</body>
+</html>
+
+

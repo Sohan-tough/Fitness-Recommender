@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Dashboard · Fitness Recommender</title>
+  <link rel="stylesheet" href="/static/css/styles.css" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script defer src="/static/js/app.js"></script>
+  <script>
+    window.__EXERCISES__ = {{ exercises | tojson }};
+  </script>
+</head>
+<body>
+  <header class="app-header">
+    <h1>🏋️‍♂️ Fitness Dashboard</h1>
+    <nav class="auth-bar">
+      {% if user %}
+        <span class="pill">Signed in as {{ user['name'] or user['email'] }}</span>
+        <a class="pill" href="/" style="text-decoration:none">Edit profile</a>
+        <form method="post" action="/logout" style="display:inline"><button class="pill" type="submit">Logout</button></form>
+      {% else %}
+        <a class="pill" href="/signin" style="text-decoration:none">Sign in</a>
+      {% endif %}
+    </nav>
+  </header>
+
+  <main class="container">
+    <section class="card">
+      <h2>Your Details</h2>
+      <div class="grid-2">
+        <label>Age<input id="age" type="number" min="18" max="70" placeholder="e.g., 24" /></label>
+        <label>Gender
+          <select id="gender">
+            <option>Male</option>
+            <option>Female</option>
+          </select>
+        </label>
+        <label>Weight (kg)<input id="weight" type="number" step="0.1" placeholder="e.g., 72" /></label>
+        <label>Height (m)<input id="height" type="number" step="0.01" placeholder="e.g., 1.75" /></label>
+        <label>Session Duration (hours)
+          <input id="session_duration" type="number" step="0.1" min="0.5" max="3" value="1" />
+        </label>
+        <label>Workout Frequency (days/week)
+          <input id="frequency" type="number" min="1" max="7" value="4" />
+        </label>
+      </div>
+    </section>
+
+    <section class="card">
+      <h2>Exercises</h2>
+      <div class="exercise-picker">
+        <input id="exercise-search" type="text" placeholder="Search exercises..." />
+        <div id="exercise-list" class="exercise-list"></div>
+      </div>
+      <div>
+        <h3>Selected</h3>
+        <div id="selected-exercises" class="selected-grid"></div>
+      </div>
+    </section>
+
+    <section class="actions">
+      <button id="predict" class="primary">Predict Fitness Metrics</button>
+      <button id="saveProfile" class="pill" type="button">Save Profile</button>
+    </section>
+
+    <section id="results" class="results hidden">
+      <div class="grid-3">
+        <div class="metric">
+          <span class="label">Predicted Fat%</span>
+          <span id="fat_pred" class="value">—</span>
+        </div>
+        <div class="metric">
+          <span class="label">Ideal Fat%</span>
+          <span id="ideal_fat" class="value">—</span>
+        </div>
+        <div class="metric">
+          <span class="label">Water Intake (L/day)</span>
+          <span id="water_pred" class="value">—</span>
+        </div>
+      </div>
+
+      <div id="recommendations" class="card"></div>
+
+      <div class="card" style="margin-top:12px">
+        <h3 style="margin-top:0">Body Fat Comparison</h3>
+        <canvas id="fatChart" height="100"></canvas>
+      </div>
+
+      <div class="card" style="margin-top:12px">
+        <h3 style="margin-top:0">Reps per Exercise: Current vs Recommended</h3>
+        <canvas id="repsChart" height="140"></canvas>
+      </div>
+    </section>
+  </main>
+
+  <footer class="app-footer">Made with Flask · Inter UI</footer>
+</body>
+</html>
+
+

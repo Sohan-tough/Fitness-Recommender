@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Your Profile · Fitness Recommender</title>
+  <link rel="stylesheet" href="/static/css/styles.css" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+  <script>
+    async function loadProfile(){
+      const r = await fetch('/api/profile');
+      const p = await r.json();
+      if (p && !p.error){
+        if (p.age) document.getElementById('age').value = p.age;
+        if (p.gender) document.getElementById('gender').value = p.gender;
+        if (p.weight) document.getElementById('weight').value = p.weight;
+        if (p.height) document.getElementById('height').value = p.height;
+        if (p.session_duration) document.getElementById('session_duration').value = p.session_duration;
+        if (p.frequency) document.getElementById('frequency').value = p.frequency;
+      }
+    }
+    async function saveProfile(evt){
+      evt.preventDefault();
+      const payload = {
+        age: Number(document.getElementById('age').value),
+        gender: document.getElementById('gender').value,
+        weight: Number(document.getElementById('weight').value),
+        height: Number(document.getElementById('height').value),
+        session_duration: Number(document.getElementById('session_duration').value),
+        frequency: Number(document.getElementById('frequency').value),
+        exercises_json: '{}'
+      };
+      const res = await fetch('/api/profile', {method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify(payload)});
+      const data = await res.json();
+      if (data && data.ok){
+        window.location.href = '/dashboard';
+      } else {
+        alert(data.error || 'Failed to save');
+      }
+    }
+    window.addEventListener('DOMContentLoaded', loadProfile);
+  </script>
+</head>
+<body>
+  <header class="app-header">
+    <h1>Complete your profile</h1>
+    <nav class="auth-bar">
+      {% if user %}
+        <span class="pill">Signed in as {{ user['name'] or user['email'] }}</span>
+        <form method="post" action="/logout" style="display:inline">
+          <button class="pill" type="submit">Logout</button>
+        </form>
+      {% endif %}
+      <a class="pill" href="/dashboard" style="text-decoration:none">Go to dashboard →</a>
+    </nav>
+  </header>
+  <main class="container" style="max-width:760px">
+    <section class="card">
+      <form onsubmit="saveProfile(event)" class="grid-2">
+        <label>Age<input id="age" type="number" min="18" max="70" required /></label>
+        <label>Gender
+          <select id="gender">
+            <option>Male</option>
+            <option>Female</option>
+          </select>
+        </label>
+        <label>Weight (kg)<input id="weight" type="number" step="0.1" required /></label>
+        <label>Height (m)<input id="height" type="number" step="0.01" required /></label>
+        <label>Session Duration (hours)
+          <input id="session_duration" type="number" step="0.1" min="0.5" max="3" value="1" />
+        </label>
+        <label>Workout Frequency (days/week)
+          <input id="frequency" type="number" min="1" max="7" value="4" />
+        </label>
+        <div style="grid-column:1/-1">
+          <button class="primary" type="submit">Save & Continue</button>
+        </div>
+      </form>
+    </section>
+  </main>
+</body>
+</html>
+
+
